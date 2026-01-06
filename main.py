@@ -3,14 +3,17 @@ from playwright.sync_api import sync_playwright
 from banks.definitions import BankOfAmerica, Chase, Citi, CapitalOne
 
 def main():
-    # Define the list of banks in the specific order requested
-    # Note: Citi is requested twice.
+    BASE_DOWNLOAD_DIR = "/home/USER/CUSTOM_PATH"
+
+    # Define the sequence of banks to process and their specific download paths.
+    # Each entry is a tuple: (BankInstance, "Path/To/Copy")
+    # This ensures that even for duplicate banks (like Citi), you can set different paths.
     banks_to_process = [
-        BankOfAmerica(),
-        Chase(),
-        Citi(),
-        Citi(),
-        CapitalOne()
+        (BankOfAmerica(), f"{BASE_DOWNLOAD_DIR}/BOA"),
+        (Chase(),         f"{BASE_DOWNLOAD_DIR}/Chase"),
+        (Citi(),          f"{BASE_DOWNLOAD_DIR}/Citi_Personal"),
+        (Citi(),          f"{BASE_DOWNLOAD_DIR}/Citi_Business"),
+        (CapitalOne(),    f"{BASE_DOWNLOAD_DIR}/CapitalOne")
     ]
 
     print("Starting Bank Automation Script...")
@@ -21,8 +24,8 @@ def main():
         context = browser.new_context()
         page = context.new_page()
 
-        for bank in banks_to_process:
-            bank.process(page)
+        for bank, save_path in banks_to_process:
+            bank.process(page, save_path=save_path)
 
         print("All banks processed.")
         input("Press Enter to close the browser and exit...")

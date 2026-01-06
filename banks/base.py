@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+import pyperclip
 from playwright.sync_api import Page
 
 class BankSite(ABC):
@@ -8,7 +9,7 @@ class BankSite(ABC):
         self.name = name
         self.url = url
 
-    def process(self, page: Page):
+    def process(self, page: Page, save_path: str = None):
         """
         Navigates to the bank's URL and pauses for manual interaction.
         Subclasses can override this to add specific automation steps.
@@ -25,6 +26,13 @@ class BankSite(ABC):
             return
 
         print(f"Opened {self.name}. Perform your manual actions.")
+        if save_path:
+            try:
+                pyperclip.copy(save_path)
+                print(f"  [Clipboard] Copied save path to clipboard: '{save_path}'")
+            except Exception as e:
+                print(f"  [Error] Failed to copy to clipboard: {e}")
+
         self.manual_intervention_hook(page)
         print(f"Finished processing {self.name}.\n")
 
