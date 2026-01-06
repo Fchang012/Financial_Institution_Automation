@@ -1,2 +1,4 @@
 venv/*
 vscode.deb
+.vscode/*
+banks/__pycache__/*
