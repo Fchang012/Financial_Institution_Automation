@@ -22,9 +22,9 @@ def main():
         # Launch browser (headless=False so user can see and interact)
         browser = p.chromium.launch(headless=False)
         context = browser.new_context()
-        page = context.new_page()
 
         for bank, save_path in banks_to_process:
+            page = context.new_page()
             bank.process(page, save_path=save_path)
 
         print("All banks processed.")
