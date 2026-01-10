@@ -98,4 +98,4 @@ class BankSite(ABC):
         In the future, automated steps can be added here or before/after this call.
         """
         print(f"Waiting for user to close the {self.name} tab...")
-        page.wait_for_event("close", timeout=300000) # 5 minutes
+        page.wait_for_event("close", timeout=600000) # 10 minutes
