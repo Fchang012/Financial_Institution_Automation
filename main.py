@@ -9,11 +9,12 @@ def main():
     # Each entry is a tuple: (BankInstance, "Path/To/Copy")
     # This ensures that even for duplicate banks (like Citi), you can set different paths.
     banks_to_process = [
-        (BankOfAmerica(), f"{BASE_DOWNLOAD_DIR}/BOA"),
         (Chase(),         f"{BASE_DOWNLOAD_DIR}/Chase"),
-        (Citi(),          f"{BASE_DOWNLOAD_DIR}/Citi_Personal"),
-        (Citi(),          f"{BASE_DOWNLOAD_DIR}/Citi_Business"),
-        (CapitalOne(),    f"{BASE_DOWNLOAD_DIR}/CapitalOne")
+        (BankOfAmerica(), f"{BASE_DOWNLOAD_DIR}/BOA"),
+        (Citi(),          f"{BASE_DOWNLOAD_DIR}/Citi_COSTCO"),
+        (Citi(),          f"{BASE_DOWNLOAD_DIR}/Citi_DC"),
+        (Chase(),         f"{BASE_DOWNLOAD_DIR}/K_Chase"),
+        (CapitalOne(),    f"{BASE_DOWNLOAD_DIR}/K_CapitalOne")
     ]
 
     print("Starting Bank Automation Script...")
