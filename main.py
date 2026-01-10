@@ -1,9 +1,14 @@
 import sys
+import os
+from dotenv import load_dotenv
 from playwright.sync_api import sync_playwright
 from banks.definitions import BankOfAmerica, Chase, Citi, CapitalOne
 
+#Load environment variables immediately
+load_dotenv()
+
 def main():
-    BASE_DOWNLOAD_DIR = "/home/USER/CUSTOM_PATH"
+    BASE_DOWNLOAD_DIR = os.getenv("BASE_DOWNLOAD_DIR")
 
     # Define the sequence of banks to process and their specific download paths.
     # Each entry is a tuple: (BankInstance, "Path/To/Copy")
