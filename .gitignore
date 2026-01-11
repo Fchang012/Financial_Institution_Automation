@@ -5,3 +5,9 @@ banks/__pycache__/*
 input/*
 output/*
 .env
+Chase/*
+BOA/*
+Citi_COSTCO/*
+Citi_DC/*
+K_Chase/*
+K_CapitalOne/*
