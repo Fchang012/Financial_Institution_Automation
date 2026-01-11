@@ -4,6 +4,7 @@ import os
 import tkinter
 from tkinter import filedialog
 from playwright.sync_api import Page, Download
+import subprocess
 
 class BankSite(ABC):
     """Abstract base class for a bank website."""
@@ -12,7 +13,53 @@ class BankSite(ABC):
         self.name = name
         self.url = url
 
-    def process(self, page: Page, save_path: str = None):
+    def copy_to_clipboard(self, text: str):
+        """
+        Attempts to copy text to clipboard using pyperclip, falling back to 
+        system commands (wl-copy, xclip, etc.) if pyperclip fails.
+        """
+        try:
+            pyperclip.copy(text)
+            print(f"  [Clipboard] Copied to clipboard (via pyperclip): '{text}'")
+            return
+        except Exception as e_pyperclip:
+            print(f"  [Warning] Pyperclip failed: {e_pyperclip}. Trying system fallback...")
+
+        # Fallback for Wayland/Linux if pyperclip fails
+        try:
+            # Try wl-copy (Wayland)
+            subprocess.run(["wl-copy"], input=text.encode('utf-8'), check=True)
+            print(f"  [Clipboard] Copied to clipboard (via wl-copy): '{text}'")
+            return
+        except FileNotFoundError:
+            pass # wl-copy not found
+        except Exception as e:
+            print(f"  [Warning] wl-copy failed: {e}")
+
+        # Fallback for X11 (or XWayland if wl-copy fails)
+        try:
+            # Try xclip
+            subprocess.run(["xclip", "-selection", "clipboard"], input=text.encode('utf-8'), check=True)
+            print(f"  [Clipboard] Copied to clipboard (via xclip): '{text}'")
+            return
+        except FileNotFoundError:
+            pass # xclip not found
+        except Exception as e:
+            print(f"  [Warning] xclip failed: {e}")
+
+        try:
+            # Try xsel
+            subprocess.run(["xsel", "--clipboard", "--input"], input=text.encode('utf-8'), check=True)
+            print(f"  [Clipboard] Copied to clipboard (via xsel): '{text}'")
+            return
+        except FileNotFoundError:
+            pass # xsel not found
+        except Exception as e:
+            print(f"  [Warning] xsel failed: {e}")
+
+        print(f"  [Error] Failed to copy '{text}' to clipboard using all available methods.")
+
+    def process(self, page: Page, save_path: str = None, clipboard_string: str = None):
         """
         Navigates to the bank's URL and pauses for manual interaction.
         Subclasses can override this to add specific automation steps.
@@ -31,23 +78,20 @@ class BankSite(ABC):
 
             # Set up download listener if save_path is provided
             if save_path:
-                page.on("download", lambda download: self.handle_download(download, save_path))
+                page.on("download", lambda download: self.handle_download(download, save_path, clipboard_string))
                 print(f"  [Auto-Download] Monitoring downloads to save to: {save_path}")
         except Exception as e:
             print(f"Error navigating to {self.name}: {e}")
             return
 
-        if save_path:
-            try:
-                pyperclip.copy(save_path)
-                print(f"  [Clipboard] Copied save path to clipboard: '{save_path}'")
-            except Exception as e:
-                print(f"  [Error] Failed to copy to clipboard: {e}")
+        if save_path and not clipboard_string:
+            # Fallback: copy save_path if no specific clipboard_string is provided
+            self.copy_to_clipboard(save_path)
 
         self.manual_intervention_hook(page)
         print(f"Finished processing {self.name}.\n")
 
-    def handle_download(self, download: Download, save_path: str):
+    def handle_download(self, download: Download, save_path: str, clipboard_string: str = None):
         """
         Callback to handle file downloads with a manual 'Save As' dialog.
         """
@@ -69,6 +113,10 @@ class BankSite(ABC):
             # Open Save As dialog
             # initialdir = save_path (the default for this bank)
             # initialfile = the browser's suggested filename
+            
+            if clipboard_string:
+                self.copy_to_clipboard(clipboard_string)
+
             file_path = filedialog.asksaveasfilename(
                 title=f"Save Download from {self.name}",
                 initialdir=save_path,

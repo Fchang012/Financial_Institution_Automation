@@ -11,15 +11,15 @@ def main():
     BASE_DOWNLOAD_DIR = os.getenv("BASE_DOWNLOAD_DIR")
 
     # Define the sequence of banks to process and their specific download paths.
-    # Each entry is a tuple: (BankInstance, "Path/To/Copy")
+    # Each entry is a tuple: (BankInstance, "Path/To/Copy", "ClipboardString")
     # This ensures that even for duplicate banks (like Citi), you can set different paths.
     banks_to_process = [
-        (Chase(),         f"{BASE_DOWNLOAD_DIR}/Chase"),
-        (BankOfAmerica(), f"{BASE_DOWNLOAD_DIR}/BOA"),
-        (Citi(),          f"{BASE_DOWNLOAD_DIR}/Citi_COSTCO"),
-        (Citi(),          f"{BASE_DOWNLOAD_DIR}/Citi_DC"),
-        (Chase(),         f"{BASE_DOWNLOAD_DIR}/K_Chase"),
-        (CapitalOne(),    f"{BASE_DOWNLOAD_DIR}/K_CapitalOne")
+        (Chase(),         f"{BASE_DOWNLOAD_DIR}/Chase",       "(C"),
+        (BankOfAmerica(), f"{BASE_DOWNLOAD_DIR}/BOA",         "(BOA)"),
+        (Citi(),          f"{BASE_DOWNLOAD_DIR}/Citi_COSTCO", "(Citi_COSTCO)"),
+        (Citi(),          f"{BASE_DOWNLOAD_DIR}/Citi_DC",     "(Citi_DC)"),
+        (Chase(),         f"{BASE_DOWNLOAD_DIR}/K_Chase",     "(K_C)"),
+        (CapitalOne(),    f"{BASE_DOWNLOAD_DIR}/K_CapitalOne", "(K_COVX)")
     ]
 
     print("Starting Bank Automation Script...")
@@ -29,9 +29,9 @@ def main():
         browser = p.chromium.launch(headless=False)
         context = browser.new_context()
 
-        for bank, save_path in banks_to_process:
+        for bank, save_path, clipboard_string in banks_to_process:
             page = context.new_page()
-            bank.process(page, save_path=save_path)
+            bank.process(page, save_path=save_path, clipboard_string=clipboard_string)
 
         print("All banks processed.")
         input("Press Enter to close the browser and exit...")
