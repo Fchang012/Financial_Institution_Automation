@@ -4,3 +4,4 @@ vscode.deb
 banks/__pycache__/*
 input/*
 output/*
+.env
