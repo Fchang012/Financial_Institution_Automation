@@ -18,7 +18,7 @@ def main():
         (BankOfAmerica(), f"{BASE_DOWNLOAD_DIR}/BOA",         "(BOA)"),
         (Citi(),          f"{BASE_DOWNLOAD_DIR}/Citi_COSTCO", "(Citi_COSTCO)"),
         (Citi(),          f"{BASE_DOWNLOAD_DIR}/Citi_DC",     "(Citi_DC)"),
-        (Chase(),         f"{BASE_DOWNLOAD_DIR}/K_Chase",     "(K_C)"),
+        (Chase(),         f"{BASE_DOWNLOAD_DIR}/K_Chase",     "(K_C"),
         (CapitalOne(),    f"{BASE_DOWNLOAD_DIR}/K_CapitalOne", "(K_COVX)")
     ]
 
